@@ -1,0 +1,7 @@
+PyQt5
+mysql-connector-python
+trimesh
+pyglet
+numpy
+scipy
+open3d
