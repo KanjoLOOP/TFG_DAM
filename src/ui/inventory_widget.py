@@ -1,0 +1,129 @@
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, 
+                             QTableWidgetItem, QPushButton, QHeaderView, QGroupBox, 
+                             QFormLayout, QLineEdit, QComboBox, QMessageBox)
+from PyQt5.QtCore import Qt
+from src.logic.inventory_manager import InventoryManager
+
+class InventoryWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.manager = InventoryManager()
+        self.init_ui()
+        self.refresh_table()
+
+    def init_ui(self):
+        layout = QVBoxLayout()
+
+        # --- Formulario de Añadir ---
+        form_group = QGroupBox("Añadir Nuevo Filamento")
+        form_layout = QHBoxLayout()
+
+        self.input_brand = QLineEdit()
+        self.input_brand.setPlaceholderText("Marca")
+        form_layout.addWidget(self.input_brand)
+
+        self.input_type = QComboBox()
+        self.input_type.addItems(["PLA", "PETG", "ABS", "TPU", "ASA", "Otro"])
+        form_layout.addWidget(self.input_type)
+
+        self.input_color = QLineEdit()
+        self.input_color.setPlaceholderText("Color")
+        form_layout.addWidget(self.input_color)
+
+        self.input_weight = QLineEdit()
+        self.input_weight.setPlaceholderText("Peso (g)")
+        form_layout.addWidget(self.input_weight)
+
+        self.input_price = QLineEdit()
+        self.input_price.setPlaceholderText("Precio (€)")
+        form_layout.addWidget(self.input_price)
+
+        self.btn_add = QPushButton("Añadir")
+        self.btn_add.clicked.connect(self.add_filament)
+        form_layout.addWidget(self.btn_add)
+
+        form_group.setLayout(form_layout)
+        layout.addWidget(form_group)
+
+        # --- Tabla de Inventario ---
+        self.table = QTableWidget()
+        self.table.setColumnCount(6)
+        self.table.setHorizontalHeaderLabels(["ID", "Marca", "Tipo", "Color", "Peso Restante (g)", "Precio (€)"])
+        self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.table.setSelectionBehavior(QTableWidget.SelectRows)
+        layout.addWidget(self.table)
+
+        # --- Botones de Acción ---
+        action_layout = QHBoxLayout()
+        self.btn_delete = QPushButton("Eliminar Seleccionado")
+        self.btn_delete.setStyleSheet("background-color: #dc3545;")
+        self.btn_delete.clicked.connect(self.delete_filament)
+        action_layout.addWidget(self.btn_delete)
+        action_layout.addStretch()
+        
+        layout.addLayout(action_layout)
+
+        self.setLayout(layout)
+
+    def refresh_table(self):
+        """Recarga la tabla con datos de la BD."""
+        self.table.setRowCount(0)
+        filaments = self.manager.get_all_filaments()
+        
+        if filaments:
+            for row_idx, f in enumerate(filaments):
+                self.table.insertRow(row_idx)
+                self.table.setItem(row_idx, 0, QTableWidgetItem(str(f['id'])))
+                self.table.setItem(row_idx, 1, QTableWidgetItem(f['brand']))
+                self.table.setItem(row_idx, 2, QTableWidgetItem(f['material_type']))
+                self.table.setItem(row_idx, 3, QTableWidgetItem(f['color']))
+                self.table.setItem(row_idx, 4, QTableWidgetItem(str(f['weight_current'])))
+                self.table.setItem(row_idx, 5, QTableWidgetItem(str(f['price'])))
+
+    def add_filament(self):
+        brand = self.input_brand.text()
+        m_type = self.input_type.currentText()
+        color = self.input_color.text()
+        weight = self.input_weight.text()
+        price = self.input_price.text()
+
+        if not (brand and color and weight and price):
+            QMessageBox.warning(self, "Error", "Todos los campos son obligatorios.")
+            return
+
+        try:
+            weight_val = float(weight)
+            price_val = float(price)
+            
+            success, msg = self.manager.add_filament(brand, m_type, color, weight_val, price_val)
+            if success:
+                self.refresh_table()
+                self.clear_inputs()
+                QMessageBox.information(self, "Éxito", msg)
+            else:
+                QMessageBox.warning(self, "Error", msg)
+        except ValueError:
+            QMessageBox.warning(self, "Error", "Peso y Precio deben ser numéricos.")
+
+    def delete_filament(self):
+        selected_rows = self.table.selectionModel().selectedRows()
+        if not selected_rows:
+            return
+
+        confirm = QMessageBox.question(self, "Confirmar", "¿Eliminar filamento seleccionado?", 
+                                       QMessageBox.Yes | QMessageBox.No)
+        
+        if confirm == QMessageBox.Yes:
+            row = selected_rows[0].row()
+            f_id = int(self.table.item(row, 0).text())
+            
+            if self.manager.delete_filament(f_id):
+                self.refresh_table()
+            else:
+                QMessageBox.warning(self, "Error", "No se pudo eliminar.")
+
+    def clear_inputs(self):
+        self.input_brand.clear()
+        self.input_color.clear()
+        self.input_weight.clear()
+        self.input_price.clear()

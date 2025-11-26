@@ -1,19 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
+import os
 
-class Gestor3DApp(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        self.setWindowTitle("Gestor 3D")
-        self.setGeometry(100, 100, 800, 600)
-        
-        label = QLabel("Bienvenido a Gestor 3D", self)
-        label.move(350, 250)
-        label.adjustSize()
+# Añadir el directorio raíz al path para que funcionen los imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from PyQt5.QtWidgets import QApplication
+from src.ui.main_window import MainWindow
 
 def main():
     app = QApplication(sys.argv)
-    window = Gestor3DApp()
+    window = MainWindow()
     window.show()
     sys.exit(app.exec_())
 
