@@ -4,44 +4,44 @@
 ![Versión](https://img.shields.io/badge/Versión-0.1.0-blue)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-green)
 
-## 📋 Descripción
+## Descripción
 **Gestor 3D** es una aplicación de escritorio multiplataforma diseñada para entusiastas y profesionales de la impresión 3D. Permite gestionar proyectos, calcular costes de impresión, organizar una biblioteca de modelos con visualización 3D integrada, controlar el inventario de filamentos y acceder a un marketplace de diseños.
 
-## 🎯 Objetivos del Proyecto
+## Objetivos del Proyecto
 - **Gestión Integral**: Centralizar proyectos, materiales y costes en una sola aplicación
 - **Calculadora de Costes**: Estimación precisa basada en material, energía y tiempo
 - **Biblioteca 3D**: Organización visual de archivos STL con visor integrado
 - **Inventario**: Control de stock de filamentos con registro detallado
 - **Marketplace**: Plataforma de intercambio de modelos (simulado)
 
-## ✨ Características
+## Características
 
-### 🧮 Calculadora de Costes
+### Calculadora de Costes
 - Cálculo automático de coste de filamento
 - Estimación de consumo energético
 - Desglose detallado de gastos
 
-### 📚 Biblioteca de Modelos
+### Biblioteca de Modelos
 - Importación de archivos STL
 - Visor 3D integrado (Matplotlib + Trimesh)
 - Gestión de modelos (añadir/eliminar)
 
-### 📦 Inventario de Filamentos
+### Inventario de Filamentos
 - Registro de rollos (marca, tipo, color, peso, precio)
 - Tabla interactiva con búsqueda
 - Control de stock restante
 
-### 🛒 Marketplace
+### Marketplace
 - Catálogo de modelos 3D
 - Simulación de compra/descarga
 
-## 🛠️ Tecnologías
+## Tecnologías
 - **Lenguaje**: Python 3.8+
 - **Interfaz**: PyQt5
 - **Base de Datos**: SQLite
 - **Visualización 3D**: Trimesh + Matplotlib
 
-## 📥 Instalación
+## Instalación
 
 ### Requisitos Previos
 - Python 3.8 o superior
@@ -60,12 +60,12 @@ pip install -r requirements.txt
 python src/main.py
 ```
 
-## 📖 Documentación
+## Documentación
 - [Manual de Usuario](MANUAL_USUARIO.md) - Guía completa de uso
 - [Documentación de Desarrollo](DESARROLLO.md) - Arquitectura y decisiones técnicas
 - [Fundamentos Teóricos](DOCUMENTACION.md) - Objetivos y metodología
 
-## 🗂️ Estructura del Proyecto
+## Estructura del Proyecto
 ```
 Gestor3D/
 ├── src/
@@ -81,25 +81,24 @@ Gestor3D/
 └── requirements.txt
 ```
 
-## 🚀 Estado del Proyecto
+## Estado del Proyecto
 **Versión Actual**: 0.1.0 (MVP)
 
-### Completado ✅
+### Completado 
 - [x] Interfaz gráfica con navegación
 - [x] Calculadora de costes funcional
 - [x] Biblioteca con visor 3D
 - [x] Inventario CRUD
 - [x] Marketplace simulado
 
-### Próximas Mejoras 🔜
+### Próximas Mejoras 
 - [ ] Autenticación de usuarios
 - [ ] Exportación de informes PDF
 - [ ] Integración con slicers (Cura, PrusaSlicer)
 - [ ] Marketplace real con API
 - [ ] Gráficos de estadísticas
 
-## 👨‍💻 Autor
+##  Autor
 Desarrollado como Trabajo de Fin de Grado (TFG) - DAM
 
-## 📄 Licencia
-Este proyecto es de código abierto para fines educativos.
+
