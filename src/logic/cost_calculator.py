@@ -18,3 +18,9 @@ class CostCalculator:
     def calculate_total_cost(self, filament_cost, energy_cost, additional_costs=0.0):
         """Calcula el coste total."""
         return filament_cost + energy_cost + additional_costs
+    
+    def calculate_sale_price(self, total_cost, margin_multiplier):
+        """Calcula el precio de venta aplicando el margen de ganancia."""
+        if total_cost < 0 or margin_multiplier < 0:
+            return 0.0
+        return total_cost * margin_multiplier
