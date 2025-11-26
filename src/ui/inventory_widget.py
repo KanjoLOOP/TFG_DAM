@@ -56,7 +56,7 @@ class InventoryWidget(QWidget):
         # --- Botones de Acción ---
         action_layout = QHBoxLayout()
         self.btn_delete = QPushButton("Eliminar Seleccionado")
-        self.btn_delete.setStyleSheet("background-color: #dc3545;")
+        self.btn_delete.setStyleSheet("background-color: #8b0000; color: white;")
         self.btn_delete.clicked.connect(self.delete_filament)
         action_layout.addWidget(self.btn_delete)
         action_layout.addStretch()
