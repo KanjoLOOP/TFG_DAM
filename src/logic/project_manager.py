@@ -35,7 +35,11 @@ class ProjectManager:
             WHERE p.user_id = ?
             ORDER BY p.created_at DESC
         """
-        return self.db.fetch_all(query, (user_id,))
+        results = self.db.fetch_query(query, (user_id,))
+        # Convertir diccionarios a tuplas para compatibilidad con el código existente
+        if results:
+            return [tuple(r.values()) for r in results]
+        return []
     
     def get_project_by_id(self, project_id):
         """Obtiene un proyecto por ID."""

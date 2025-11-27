@@ -63,6 +63,23 @@ class DBManager:
             return None
         finally:
             cursor.close()
+    
+    def fetch_one(self, query, params=()):
+        """Ejecuta una consulta de selección y retorna solo una fila."""
+        if not self.connection:
+            if not self.connect():
+                return None
+
+        cursor = self.connection.cursor()
+        try:
+            cursor.execute(query, params)
+            result = cursor.fetchone()
+            return result
+        except Error as e:
+            print(f"Error al obtener datos: {e}")
+            return None
+        finally:
+            cursor.close()
 
     def init_db(self, schema_file):
         """Inicializa la base de datos ejecutando un script SQL."""
@@ -85,3 +102,4 @@ class DBManager:
         except FileNotFoundError:
             print(f"Archivo no encontrado: {schema_file}")
             return False
+
