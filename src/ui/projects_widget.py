@@ -24,7 +24,8 @@ class ProjectsWidget(QWidget):
         self.init_ui()
     
     def init_ui(self):
-        self.setStyleSheet("background-color: #1E1E1E;")
+        self.setObjectName("ProjectsWidget")
+        self.setStyleSheet("#ProjectsWidget { background-color: #1E1E1E; }")
         
         layout = QVBoxLayout()
         layout.setContentsMargins(20, 20, 20, 20)
@@ -44,7 +45,7 @@ class ProjectsWidget(QWidget):
         btn_stats.setCursor(Qt.PointingHandCursor)
         btn_stats.setStyleSheet("""
             QPushButton {
-                background-color: #2C3E50;
+                background-color: #007BFF;
                 color: white;
                 border-radius: 6px;
                 padding: 10px 20px;
@@ -52,7 +53,10 @@ class ProjectsWidget(QWidget):
                 font-size: 14px;
             }
             QPushButton:hover {
-                background-color: #34495E;
+                background-color: #1a8cff;
+            }
+            QPushButton:pressed {
+                background-color: #0056b3;
             }
         """)
         btn_stats.clicked.connect(self.export_stats)
@@ -194,16 +198,16 @@ class ProjectsWidget(QWidget):
         btn_delete.setCursor(Qt.PointingHandCursor)
         btn_delete.setStyleSheet("""
             QPushButton {
-                background-color: #1E1E1E;
-                color: #dc3545;
-                border: 1px solid #dc3545;
+                background-color: #f44336;
+                color: white;
+                border: none;
                 border-radius: 4px;
                 padding: 6px 12px;
                 font-size: 12px;
+                font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #dc3545;
-                color: white;
+                background-color: #d32f2f;
             }
         """)
         btn_delete.clicked.connect(lambda: self.delete_project(project[0], project[1]))
@@ -279,7 +283,8 @@ class ProjectDialog(QDialog):
         
         self.setWindowTitle("Editar Proyecto" if self.is_edit else "Nuevo Proyecto")
         self.setMinimumSize(500, 600)
-        self.setStyleSheet("background-color: #2C2C2C; color: white;")
+        self.setObjectName("ProjectDialog")
+        self.setStyleSheet("#ProjectDialog { background-color: #2C2C2C; color: white; }")
         
         self.init_ui()
     

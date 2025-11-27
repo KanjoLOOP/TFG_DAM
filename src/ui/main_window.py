@@ -2,7 +2,7 @@ import os
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QStackedWidget, QFrame, QLabel, QMessageBox)
 from src.ui.utils import MessageBoxHelper
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QIcon
 
 from src.ui.home_widget import HomeWidget
@@ -14,6 +14,8 @@ from src.ui.settings_widget import SettingsWidget
 from src.ui.projects_widget import ProjectsWidget
 
 class MainWindow(QMainWindow):
+    logout_requested = pyqtSignal()  # Señal para volver al login
+    
     def __init__(self, auth_manager):
         super().__init__()
         self.auth_manager = auth_manager
@@ -122,6 +124,8 @@ class MainWindow(QMainWindow):
         
         # Conectar señales
         self.inventory_widget.data_changed.connect(self.home_widget.refresh_dashboard)
+        self.settings_widget.logout_requested.connect(self.handle_logout)
+        self.settings_widget.exit_requested.connect(self.handle_exit)
 
         self.content_area.addWidget(self.home_widget)
         self.content_area.addWidget(self.calc_widget)
@@ -133,6 +137,17 @@ class MainWindow(QMainWindow):
 
         # Seleccionar página inicial
         self.btn_home.click()
+    
+    def handle_logout(self):
+        """Maneja el cierre de sesión."""
+        self.auth_manager.logout()
+        self.logout_requested.emit()
+        self.close()
+    
+    def handle_exit(self):
+        """Maneja la salida de la aplicación."""
+        from PyQt5.QtWidgets import QApplication
+        QApplication.quit()
 
     def switch_page(self, index, button):
         """Cambia la página visible y actualiza el estado de los botones."""

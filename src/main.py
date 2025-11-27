@@ -9,26 +9,49 @@ from src.ui.main_window import MainWindow
 from src.ui.login_widget import LoginWidget
 from src.logic.auth_manager import AuthManager
 
-def main():
-    app = QApplication(sys.argv)
-    app.setStyle("Fusion")  # Forzar estilo Fusion para mejor soporte QSS
+class App:
+    """Clase principal que maneja el ciclo de vida de la aplicación."""
     
-    # Crear gestor de autenticación
-    auth_manager = AuthManager()
+    def __init__(self):
+        self.app = QApplication(sys.argv)
+        self.app.setStyle("Fusion")  # Forzar estilo Fusion
+        self.auth_manager = AuthManager()
+        self.login_widget = None
+        self.main_window = None
+        
+    def show_login(self):
+        """Muestra la pantalla de login."""
+        self.login_widget = LoginWidget(self.auth_manager)
+        self.login_widget.login_successful.connect(self.on_login_successful)
+        self.login_widget.show()
     
-    # Mostrar pantalla de login
-    login_widget = LoginWidget(auth_manager)
-    
-    def on_login_successful(user):
+    def on_login_successful(self, user):
         """Callback cuando el login es exitoso."""
-        login_widget.close()
-        window = MainWindow(auth_manager)
-        window.show()
+        if self.login_widget:
+            self.login_widget.close()
+            self.login_widget = None
+        
+        self.main_window = MainWindow(self.auth_manager)
+        self.main_window.logout_requested.connect(self.on_logout_requested)
+        self.main_window.show()
     
-    login_widget.login_successful.connect(on_login_successful)
-    login_widget.show()
+    def on_logout_requested(self):
+        """Callback cuando se solicita cerrar sesión."""
+        if self.main_window:
+            self.main_window.close()
+            self.main_window = None
+        
+        # Volver a mostrar login
+        self.show_login()
     
-    sys.exit(app.exec_())
+    def run(self):
+        """Inicia la aplicación."""
+        self.show_login()
+        return self.app.exec_()
+
+def main():
+    app = App()
+    sys.exit(app.run())
 
 if __name__ == "__main__":
     main()

@@ -14,6 +14,9 @@ class MessageBoxHelper:
             QLabel {
                 color: #000000;
                 background-color: transparent;
+                background: transparent;
+                background: none;
+                border: none;
                 font-size: 14px;
             }
             QPushButton {

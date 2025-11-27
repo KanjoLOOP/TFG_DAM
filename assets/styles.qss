@@ -171,6 +171,8 @@ QMessageBox QLabel {
     color: #000000;
     font-size: 14px;
     background-color: transparent;
+    background: transparent;
+    border: none;
 }
 
 QMessageBox QPushButton {
@@ -206,7 +208,7 @@ QListWidget#LibraryList::item {
 
 QListWidget#LibraryList::item:selected {
     background-color: #3a3a3a;
-    border: 1px solid #00bcd4; /* Acento cyan sutil */
+    border: 1px solid #007BFF; /* Acento azul estándar */
     color: #ffffff;
 }
 
@@ -226,7 +228,7 @@ QLineEdit.ModernInput {
 }
 
 QLineEdit.ModernInput:focus {
-    border: 1px solid #00bcd4;
+    border: 1px solid #007BFF;
     background-color: #333333;
 }
 
@@ -259,8 +261,8 @@ QPushButton#MenuButton:hover {
 }
 
 QPushButton#MenuButton:checked {
-    background-color: #00bcd4; /* Acento activo */
+    background-color: #007BFF; /* Acento activo estándar */
     color: #ffffff;
     font-weight: bold;
-    border-left: none; /* Quitar borde antiguo */
+    border-left: none;
 }

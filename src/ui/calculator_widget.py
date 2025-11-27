@@ -115,15 +115,16 @@ class CalculatorWidget(QWidget):
         self.btn_calculate.setCursor(Qt.PointingHandCursor)
         self.btn_calculate.setStyleSheet("""
             QPushButton {
-                background-color: #8b0000;
+                background-color: #f44336;
                 color: white;
                 border-radius: 5px;
                 padding: 10px;
                 font-weight: bold;
                 font-size: 14px;
+                border: none;
             }
             QPushButton:hover {
-                background-color: #a00000;
+                background-color: #d32f2f;
             }
         """)
         self.btn_calculate.clicked.connect(self.calculate)
@@ -133,7 +134,7 @@ class CalculatorWidget(QWidget):
         self.btn_export.setCursor(Qt.PointingHandCursor)
         self.btn_export.setStyleSheet("""
             QPushButton {
-                background-color: #2C3E50;
+                background-color: #007BFF;
                 color: white;
                 border-radius: 5px;
                 padding: 10px;
@@ -141,7 +142,10 @@ class CalculatorWidget(QWidget):
                 font-size: 14px;
             }
             QPushButton:hover {
-                background-color: #34495E;
+                background-color: #1a8cff;
+            }
+            QPushButton:pressed {
+                background-color: #0056b3;
             }
         """)
         self.btn_export.clicked.connect(self.export_pdf)

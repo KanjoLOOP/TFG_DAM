@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QPushButton, QLineEdit, QFrame, QMessageBox)
+                             QPushButton, QLineEdit, QFrame, QMessageBox, QCheckBox)
 from src.ui.utils import MessageBoxHelper
+from src.logic.session_manager import SessionManager
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont
 
@@ -14,9 +15,11 @@ class LoginWidget(QWidget):
         self.auth_manager = auth_manager
         self.is_register_mode = False
         self.init_ui()
+        self.load_saved_session()
     
     def init_ui(self):
-        self.setStyleSheet("background-color: #1E1E1E;")
+        self.setObjectName("LoginWidget")
+        self.setStyleSheet("#LoginWidget { background-color: #1E1E1E; }")
         
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignCenter)
@@ -72,6 +75,28 @@ class LoginWidget(QWidget):
         self.email_input.setVisible(False)
         container_layout.addWidget(self.email_input)
         
+        # Checkbox Recuérdame
+        self.remember_me = QCheckBox("Recuérdame")
+        self.remember_me.setStyleSheet("""
+            QCheckBox {
+                color: #ccc;
+                spacing: 8px;
+            }
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+                border: 1px solid #555;
+                border-radius: 4px;
+                background-color: #2C2C2C;
+            }
+            QCheckBox::indicator:checked {
+                background-color: #007BFF;
+                border: 1px solid #007BFF;
+                image: url(assets/check_icon.png); /* Opcional, si tienes icono */
+            }
+        """)
+        container_layout.addWidget(self.remember_me)
+        
         # Botón principal (Login/Registrar)
         self.btn_main = QPushButton("Iniciar Sesión")
         self.btn_main.setCursor(Qt.PointingHandCursor)
@@ -86,10 +111,10 @@ class LoginWidget(QWidget):
                 border: none;
             }
             QPushButton:hover {
-                background-color: #0056b3;
+                background-color: #1a8cff;
             }
             QPushButton:pressed {
-                background-color: #004085;
+                background-color: #0056b3;
             }
         """)
         self.btn_main.clicked.connect(self.handle_login_or_register)
@@ -147,6 +172,14 @@ class LoginWidget(QWidget):
         layout.addWidget(container)
         self.setLayout(layout)
     
+    def load_saved_session(self):
+        """Carga credenciales guardadas si existen."""
+        username, password = SessionManager.load_session()
+        if username and password:
+            self.username_input.setText(username)
+            self.password_input.setText(password)
+            self.remember_me.setChecked(True)
+
     def toggle_mode(self):
         """Alterna entre modo login y registro."""
         self.is_register_mode = not self.is_register_mode
@@ -155,10 +188,12 @@ class LoginWidget(QWidget):
             self.btn_main.setText("Registrarse")
             self.btn_toggle.setText("¿Ya tienes cuenta? Inicia sesión")
             self.email_input.setVisible(True)
+            self.remember_me.setVisible(False) # Ocultar en registro
         else:
             self.btn_main.setText("Iniciar Sesión")
             self.btn_toggle.setText("¿No tienes cuenta? Regístrate")
             self.email_input.setVisible(False)
+            self.remember_me.setVisible(True) # Mostrar en login
     
     def handle_login_or_register(self):
         """Maneja login o registro según el modo actual."""
@@ -183,6 +218,12 @@ class LoginWidget(QWidget):
             success, message = self.auth_manager.login(username, password)
             
             if success:
+                # Gestionar "Recuérdame"
+                if self.remember_me.isChecked():
+                    SessionManager.save_session(username, password)
+                else:
+                    SessionManager.clear_session()
+                    
                 user = self.auth_manager.get_current_user()
                 self.login_successful.emit(user)
             else:

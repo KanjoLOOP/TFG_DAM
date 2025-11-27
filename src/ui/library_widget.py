@@ -1,3 +1,11 @@
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
+                             QListWidget, QFileDialog, QMessageBox, QSplitter, QLineEdit, QFrame, QLabel)
+from src.ui.utils import MessageBoxHelper
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon
+from src.logic.library_manager import LibraryManager
+from src.ui.viewer_3d import Viewer3DWidget
+
 class LibraryWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -62,17 +70,16 @@ class LibraryWidget(QWidget):
         self.btn_delete.setCursor(Qt.PointingHandCursor)
         self.btn_delete.setStyleSheet("""
             QPushButton {
-                background-color: #1e1e1e;
-                color: #ff6b6b;
-                border: 1px solid #ff6b6b;
+                background-color: #f44336;
+                color: white;
+                border: none;
                 border-radius: 6px;
                 padding: 8px 16px;
                 font-weight: 600;
                 font-size: 13px;
             }
             QPushButton:hover {
-                background-color: #ff6b6b;
-                color: white;
+                background-color: #d32f2f;
             }
         """)
         self.btn_delete.clicked.connect(self.delete_model)

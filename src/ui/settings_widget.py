@@ -4,6 +4,9 @@ from src.ui.utils import MessageBoxHelper
 from PyQt5.QtCore import Qt, pyqtSignal
 
 class SettingsWidget(QWidget):
+    logout_requested = pyqtSignal()  # Señal para cerrar sesión
+    exit_requested = pyqtSignal()    # Señal para salir de la app
+    
     def __init__(self):
         super().__init__()
         self.init_ui()
@@ -62,6 +65,67 @@ class SettingsWidget(QWidget):
 
         main_layout.addWidget(general_frame)
 
+        # --- Sección Sesión ---
+        session_frame = QFrame()
+        session_frame.setObjectName("Card")
+        session_layout = QVBoxLayout(session_frame)
+        session_layout.setContentsMargins(20, 20, 20, 20)
+        
+        session_title = QLabel("Sesión")
+        session_title.setStyleSheet("font-size: 18px; font-weight: 600; color: #e0e0e0; border: none; margin-bottom: 10px;")
+        session_layout.addWidget(session_title)
+        
+        session_desc = QLabel("Gestiona tu sesión actual:")
+        session_desc.setStyleSheet("color: #b0b0b0; margin-bottom: 10px; border: none;")
+        session_layout.addWidget(session_desc)
+        
+        # Botones de sesión
+        session_buttons = QHBoxLayout()
+        
+        btn_logout = QPushButton("Cambiar de Cuenta")
+        btn_logout.setCursor(Qt.PointingHandCursor)
+        btn_logout.setStyleSheet("""
+            QPushButton {
+                background-color: #007BFF;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1a8cff;
+            }
+            QPushButton:pressed {
+                background-color: #0056b3;
+            }
+        """)
+        btn_logout.clicked.connect(self.handle_logout)
+        
+        btn_exit = QPushButton("Salir")
+        btn_exit.setCursor(Qt.PointingHandCursor)
+        btn_exit.setStyleSheet("""
+            QPushButton {
+                background-color: #f44336;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 4px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #d32f2f;
+            }
+        """)
+        btn_exit.clicked.connect(self.handle_exit)
+        
+        session_buttons.addWidget(btn_logout)
+        session_buttons.addWidget(btn_exit)
+        session_buttons.addStretch()
+        session_layout.addLayout(session_buttons)
+        
+        main_layout.addWidget(session_frame)
+
         # --- Sección Reportar Error ---
         report_frame = QFrame()
         report_frame.setObjectName("Card")
@@ -115,6 +179,14 @@ class SettingsWidget(QWidget):
         
         main_layout.addStretch()
         self.setLayout(main_layout)
+
+    def handle_logout(self):
+        """Emite señal para cerrar sesión y volver al login."""
+        self.logout_requested.emit()
+    
+    def handle_exit(self):
+        """Emite señal para cerrar la aplicación."""
+        self.exit_requested.emit()
 
     def submit_report(self):
         text = self.error_text.toPlainText()
