@@ -153,6 +153,7 @@ class HomeWidget(QWidget):
         # Obtener últimos modelos
         models = self.library_manager.get_all_models()
         
+
         if models and len(models) > 0:
             # Mostrar hasta 5 últimos
             for model in models[:5]:
@@ -221,5 +222,11 @@ class HomeWidget(QWidget):
         layout.addStretch()
         
         return item
+
+    def refresh_dashboard(self):
+        """Actualiza todos los elementos del dashboard."""
+        self.update_materials_chart()
+        if hasattr(self, 'notifications_panel'):
+            self.notifications_panel.refresh_data()
 
 

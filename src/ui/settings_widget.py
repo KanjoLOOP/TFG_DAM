@@ -118,9 +118,19 @@ class SettingsWidget(QWidget):
     def submit_report(self):
         text = self.error_text.toPlainText()
         if not text.strip():
-            QMessageBox.warning(self, "Reporte vacío", "Por favor describe el error antes de enviar.")
+            msg_box = QMessageBox(self)
+            msg_box.setWindowTitle("Reporte vacío")
+            msg_box.setText("Por favor describe el error antes de enviar.")
+            msg_box.setIcon(QMessageBox.Warning)
+            msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+            msg_box.exec_()
             return
         
         # Aquí iría la lógica real de envío
-        QMessageBox.information(self, "Reporte Enviado", "Gracias por tu reporte. Lo revisaremos pronto.")
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Reporte Enviado")
+        msg_box.setText("Gracias por tu reporte. Lo revisaremos pronto.")
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+        msg_box.exec_()
         self.error_text.clear()

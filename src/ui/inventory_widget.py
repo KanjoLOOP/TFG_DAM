@@ -1,10 +1,12 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QTableWidget, 
                              QTableWidgetItem, QPushButton, QHeaderView, QGroupBox, 
                              QFormLayout, QLineEdit, QComboBox, QMessageBox)
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from src.logic.inventory_manager import InventoryManager
 
 class InventoryWidget(QWidget):
+    data_changed = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.manager = InventoryManager()
@@ -127,34 +129,55 @@ class InventoryWidget(QWidget):
                 self.refresh_table()
                 self.clear_inputs()
                 
-                # Popup personalizado con texto negro
                 msg_box = QMessageBox(self)
                 msg_box.setWindowTitle("Éxito")
                 msg_box.setText(msg)
                 msg_box.setIcon(QMessageBox.Information)
-                msg_box.setStyleSheet("QLabel { color: black; }")
+                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
                 msg_box.exec_()
+                self.data_changed.emit() # Emitir señal de cambio
             else:
-                QMessageBox.warning(self, "Error", msg)
+                msg_box = QMessageBox(self)
+                msg_box.setWindowTitle("Error")
+                msg_box.setText(msg)
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+                msg_box.exec_()
         except ValueError:
-            QMessageBox.warning(self, "Error", "Peso y Precio deben ser numéricos.")
+            msg = QMessageBox(self)
+            msg.setWindowTitle("Error")
+            msg.setText("Peso y Precio deben ser numéricos.")
+            msg.setIcon(QMessageBox.Warning)
+            msg.addButton("Aceptar", QMessageBox.AcceptRole)
+            msg.exec_()
 
     def delete_filament(self):
         selected_rows = self.table.selectionModel().selectedRows()
         if not selected_rows:
             return
 
-        confirm = QMessageBox.question(self, "Confirmar", "¿Eliminar filamento seleccionado?", 
-                                       QMessageBox.Yes | QMessageBox.No)
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Confirmar")
+        msg_box.setText("¿Eliminar filamento seleccionado?")
+        msg_box.setIcon(QMessageBox.Question)
+        btn_si = msg_box.addButton("Sí", QMessageBox.YesRole)
+        btn_no = msg_box.addButton("No", QMessageBox.NoRole)
+        msg_box.exec_()
         
-        if confirm == QMessageBox.Yes:
+        if msg_box.clickedButton() == btn_si:
             row = selected_rows[0].row()
             f_id = int(self.table.item(row, 0).text())
             
             if self.manager.delete_filament(f_id):
                 self.refresh_table()
+                self.data_changed.emit() # Emitir señal de cambio
             else:
-                QMessageBox.warning(self, "Error", "No se pudo eliminar.")
+                msg_box = QMessageBox(self)
+                msg_box.setWindowTitle("Error")
+                msg_box.setText("No se pudo eliminar.")
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+                msg_box.exec_()
 
     def clear_inputs(self):
         self.input_brand.clear()

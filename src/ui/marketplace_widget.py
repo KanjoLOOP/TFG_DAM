@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, 
                              QPushButton, QScrollArea, QFrame, QMessageBox, QGraphicsDropShadowEffect, QSizePolicy,
-                             QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QFileDialog)
+                             QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QFileDialog, QCheckBox, QGroupBox, QColorDialog)
 from PyQt5.QtGui import QPixmap, QColor
 from PyQt5.QtCore import Qt
 import os
@@ -265,7 +265,7 @@ class MarketplaceWidget(QWidget):
         """Abre un diálogo para subir un modelo."""
         dialog = QDialog(self)
         dialog.setWindowTitle("Subir Modelo al Marketplace")
-        dialog.setFixedSize(450, 400)
+        dialog.setMinimumSize(450, 400)
         dialog.setStyleSheet("background-color: #2C2C2C; color: white;")
         
         layout = QVBoxLayout(dialog)
@@ -286,6 +286,70 @@ class MarketplaceWidget(QWidget):
         desc_input.setPlaceholderText("Breve descripción")
         desc_input.setStyleSheet("background-color: #3a3a3a; border: 1px solid #555; padding: 5px; color: white;")
         form_layout.addRow("Descripción:", desc_input)
+        
+        cost_input = QLineEdit()
+        cost_input.setPlaceholderText("Gramos (g)")
+        cost_input.setStyleSheet("background-color: #3a3a3a; border: 1px solid #555; padding: 5px; color: white;")
+        form_layout.addRow("Coste Impresión (g):", cost_input)
+
+        # AMS Checkbox
+        ams_check = QCheckBox("Usar AMS (Multicolor)")
+        ams_check.setStyleSheet("color: white; font-weight: bold;")
+        form_layout.addRow("", ams_check)
+
+        # Contenedor para colores AMS
+        ams_group = QGroupBox("Coste por Color (g)")
+        ams_group.setStyleSheet("QGroupBox { color: white; border: 1px solid #555; margin-top: 10px; padding-top: 15px; }")
+        ams_layout = QVBoxLayout(ams_group)
+        ams_layout.setSpacing(10)
+        
+        color_inputs = []
+        color_buttons = []
+        selected_colors = ["#FFFFFF"] * 4 # Por defecto blanco
+
+        def pick_color(idx, btn):
+            color = QColorDialog.getColor(QColor(selected_colors[idx]), dialog, "Seleccionar Color")
+            if color.isValid():
+                hex_color = color.name()
+                selected_colors[idx] = hex_color
+                btn.setStyleSheet(f"background-color: {hex_color}; border: 1px solid #777; border-radius: 4px;")
+
+        for i in range(4):
+            # Botón de color
+            btn_color = QPushButton()
+            btn_color.setFixedSize(30, 30)
+            btn_color.setStyleSheet(f"background-color: {selected_colors[i]}; border: 1px solid #777; border-radius: 4px;")
+            # Usar lambda con valor por defecto para capturar el índice correcto
+            btn_color.clicked.connect(lambda checked, idx=i, b=btn_color: pick_color(idx, b))
+            
+            lbl = QLabel(f"Color {i+1}:")
+            lbl.setStyleSheet("color: #ccc;")
+            
+            inp = QLineEdit()
+            inp.setPlaceholderText("g")
+            inp.setStyleSheet("background-color: #3a3a3a; border: 1px solid #555; padding: 5px; color: white;")
+            
+            # Layout fila: [Color Box] [Label] [Input]
+            h_layout = QHBoxLayout()
+            h_layout.addWidget(btn_color)
+            h_layout.addWidget(lbl)
+            h_layout.addWidget(inp, 1)  # El input se expande
+            
+            ams_layout.addLayout(h_layout)
+            
+            color_inputs.append(inp)
+            color_buttons.append(btn_color)
+            
+        ams_group.setVisible(False) # Oculto por defecto
+        form_layout.addRow(ams_group)
+
+        # Lógica de visibilidad AMS
+        def toggle_ams(state):
+            ams_group.setVisible(state == Qt.Checked)
+            # Ajustar tamaño del diálogo si es necesario
+            dialog.adjustSize()
+
+        ams_check.stateChanged.connect(toggle_ams)
         
         # Selector de Imagen
         img_layout = QHBoxLayout()
@@ -327,7 +391,9 @@ class MarketplaceWidget(QWidget):
         
         layout.addLayout(form_layout)
         
-        buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        buttons = QDialogButtonBox()
+        btn_ok = buttons.addButton("Aceptar", QDialogButtonBox.AcceptRole)
+        btn_cancel = buttons.addButton("Cancelar", QDialogButtonBox.RejectRole)
         buttons.accepted.connect(dialog.accept)
         buttons.rejected.connect(dialog.reject)
         buttons.setStyleSheet("QPushButton { background-color: #007BFF; color: white; padding: 6px 12px; border-radius: 4px; }")
@@ -340,12 +406,28 @@ class MarketplaceWidget(QWidget):
             img_path = img_input.text()
             stl_path = stl_input.text()
             
+            # Datos nuevos
+            base_cost = cost_input.text()
+            is_ams = ams_check.isChecked()
+            ams_data = []
+            if is_ams:
+                for i in range(4):
+                    ams_data.append({
+                        "color": selected_colors[i],
+                        "grams": color_inputs[i].text()
+                    })
+            
             if name and price:
-                self.upload_model(name, price, desc, img_path, stl_path)
+                self.upload_model(name, price, desc, img_path, stl_path, base_cost, is_ams, ams_data)
             else:
-                QMessageBox.warning(self, "Error", "El nombre y el precio son obligatorios.")
+                msg_box = QMessageBox(self.window())
+                msg_box.setWindowTitle("Error")
+                msg_box.setText("El nombre y el precio son obligatorios.")
+                msg_box.setIcon(QMessageBox.Warning)
+                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+                msg_box.exec_()
 
-    def upload_model(self, name, price, desc, img_path, stl_path):
+    def upload_model(self, name, price, desc, img_path, stl_path, base_cost="", is_ams=False, ams_costs=None):
         """Simula la subida de un modelo."""
         new_item = {
             "name": name,
@@ -353,7 +435,10 @@ class MarketplaceWidget(QWidget):
             "desc": desc if desc else "Sin descripción",
             "category": "all", # Por defecto a 'Todos'
             "image": img_path if img_path else None,
-            "stl_path": stl_path if stl_path else None
+            "stl_path": stl_path if stl_path else None,
+            "base_cost": base_cost,
+            "is_ams": is_ams,
+            "ams_costs": ams_costs if ams_costs else []
         }
         
         self.mock_items.append(new_item)
@@ -362,8 +447,18 @@ class MarketplaceWidget(QWidget):
         # Simplemente repoblar el grid de 'Todos los modelos'
         self.update_grid_columns()
         
-        QMessageBox.information(self, "Éxito", f"Modelo '{name}' subido correctamente al Marketplace.")
+        msg_box = QMessageBox(self.window())
+        msg_box.setWindowTitle("Éxito")
+        msg_box.setText(f"Modelo '{name}' subido correctamente al Marketplace.")
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+        msg_box.exec_()
 
     def buy_item(self, name):
         # Simulación de compra
-        QMessageBox.information(self, "Compra Exitosa", f"Has adquirido '{name}'.\n(Simulación: El modelo se añadiría a tu biblioteca)")
+        msg_box = QMessageBox(self.window())
+        msg_box.setWindowTitle("Compra Exitosa")
+        msg_box.setText(f"Has adquirido '{name}'.\n(Simulación: El modelo se añadiría a tu biblioteca)")
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
+        msg_box.exec_()

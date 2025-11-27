@@ -112,6 +112,9 @@ class MainWindow(QMainWindow):
         self.inventory_widget = InventoryWidget()
         self.market_widget = MarketplaceWidget()
         self.settings_widget = SettingsWidget()
+        
+        # Conectar señales
+        self.inventory_widget.data_changed.connect(self.home_widget.refresh_dashboard)
 
         self.content_area.addWidget(self.home_widget)
         self.content_area.addWidget(self.calc_widget)

@@ -211,3 +211,25 @@ class NotificationsPanel(QWidget):
                 layout.addWidget(m_lbl)
 
         layout.addStretch()
+
+    def refresh_data(self):
+        """Actualiza los datos de todas las tarjetas."""
+        # Limpiar layouts de tarjetas (excepto título)
+        for card, populate_func in [
+            (self.low_material_card, self.populate_low_material_card),
+            (self.most_used_card, self.populate_most_used_card),
+            (self.monthly_summary_card, self.populate_monthly_summary_card)
+        ]:
+            layout = card.layout()
+            # Eliminar todo menos el título (index 0)
+            while layout.count() > 1:
+                item = layout.takeAt(1)
+                widget = item.widget()
+                if widget:
+                    widget.deleteLater()
+                else:
+                    # Si es un layout anidado o spacer
+                    pass
+            
+            # Repoblar
+            populate_func(card)

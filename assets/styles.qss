@@ -158,3 +158,106 @@ QFrame#Header {
     background-color: #222222;
     border-bottom: 1px solid #3a3a3a;
 }
+
+/* Mensajes Emergentes (Popups) - Estilo Light */
+QMessageBox {
+    background-color: #f5f5f5; /* Fondo blanco/gris claro */
+    color: #000000;
+}
+
+QMessageBox QLabel {
+    color: #000000; /* Texto negro */
+    font-size: 14px;
+}
+
+QMessageBox QPushButton {
+    background-color: #333333; /* Botón oscuro/negro */
+    color: #ffffff;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 6px 20px;
+    min-width: 80px;
+}
+
+QMessageBox QPushButton:hover {
+    background-color: #555555;
+}
+
+/* --- Modern Library Styles --- */
+
+/* Tarjetas de Biblioteca */
+QListWidget#LibraryList {
+    background-color: #1e1e1e;
+    border: none;
+    outline: none;
+}
+
+QListWidget#LibraryList::item {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #3a3a3a;
+    color: #e0e0e0;
+}
+
+QListWidget#LibraryList::item:selected {
+    background-color: #3a3a3a;
+    border: 1px solid #00bcd4; /* Acento cyan sutil */
+    color: #ffffff;
+}
+
+QListWidget#LibraryList::item:hover {
+    background-color: #333333;
+    border: 1px solid #555;
+}
+
+/* Inputs Modernos */
+QLineEdit.ModernInput {
+    background-color: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 20px; /* Redondeado completo */
+    padding: 8px 15px;
+    font-size: 14px;
+    color: #e0e0e0;
+}
+
+QLineEdit.ModernInput:focus {
+    border: 1px solid #00bcd4;
+    background-color: #333333;
+}
+
+/* Botones Modernos */
+QPushButton.ModernButton {
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+}
+
+/* Menú Lateral Refinado */
+QFrame#SideMenu {
+    background-color: #1a1a1a; /* Más oscuro */
+    border-right: 1px solid #2a2a2a;
+}
+
+QPushButton#MenuButton {
+    padding: 12px 20px;
+    border-radius: 8px; /* Botones flotantes */
+    margin: 4px 10px; /* Margen lateral */
+    text-align: left;
+    color: #909090;
+}
+
+QPushButton#MenuButton:hover {
+    background-color: #2a2a2a;
+    color: #ffffff;
+}
+
+QPushButton#MenuButton:checked {
+    background-color: #00bcd4; /* Acento activo */
+    color: #ffffff;
+    font-weight: bold;
+    border-left: none; /* Quitar borde antiguo */
+}
