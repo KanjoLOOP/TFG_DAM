@@ -4,3 +4,4 @@ pyglet
 numpy
 scipy
 open3d
+reportlab>=4.0.0

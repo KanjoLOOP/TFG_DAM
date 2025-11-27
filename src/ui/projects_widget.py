@@ -1,11 +1,13 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel,
                              QPushButton, QScrollArea, QFrame, QMessageBox, QDialog,
-                             QFormLayout, QLineEdit, QComboBox, QTextEdit, QDoubleSpinBox)
+                             QFormLayout, QLineEdit, QComboBox, QTextEdit, QDoubleSpinBox,
+                             QFileDialog)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from src.logic.project_manager import ProjectManager
 from src.logic.library_manager import LibraryManager
 from src.logic.inventory_manager import InventoryManager
+from src.logic.report_generator import ReportGenerator
 
 class ProjectsWidget(QWidget):
     """Widget para gestión de proyectos de impresión 3D."""
@@ -17,6 +19,7 @@ class ProjectsWidget(QWidget):
         self.project_manager = ProjectManager()
         self.library_manager = LibraryManager()
         self.inventory_manager = InventoryManager()
+        self.report_generator = ReportGenerator()
         self.init_ui()
     
     def init_ui(self):
@@ -34,6 +37,25 @@ class ProjectsWidget(QWidget):
         header_layout.addWidget(title)
         
         header_layout.addStretch()
+        
+        # Botón exportar estadísticas
+        btn_stats = QPushButton("Exportar Estadísticas")
+        btn_stats.setCursor(Qt.PointingHandCursor)
+        btn_stats.setStyleSheet("""
+            QPushButton {
+                background-color: #2C3E50;
+                color: white;
+                border-radius: 6px;
+                padding: 10px 20px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #34495E;
+            }
+        """)
+        btn_stats.clicked.connect(self.export_stats)
+        header_layout.addWidget(btn_stats)
         
         # Botón nuevo proyecto
         btn_new = QPushButton("+ Nuevo Proyecto")
@@ -227,6 +249,30 @@ class ProjectsWidget(QWidget):
             
             if success:
                 self.load_projects()
+
+    def export_stats(self):
+        """Exporta las estadísticas de proyectos a PDF."""
+        stats = self.project_manager.get_project_stats(self.user['id'])
+        
+        if not stats or stats['total_projects'] == 0:
+            QMessageBox.warning(self, "Aviso", "No hay datos suficientes para generar un informe.")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Guardar Informe de Estadísticas", "", "Archivos PDF (*.pdf)"
+        )
+        
+        if file_path:
+            if not file_path.endswith('.pdf'):
+                file_path += '.pdf'
+                
+            try:
+                # Convertir Row a dict si es necesario
+                stats_dict = dict(stats)
+                self.report_generator.generate_stats_report(self.user['username'], stats_dict, file_path)
+                QMessageBox.information(self, "Éxito", "Informe guardado correctamente")
+            except Exception as e:
+                QMessageBox.warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")
 
 
 class ProjectDialog(QDialog):

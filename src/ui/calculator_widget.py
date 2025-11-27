@@ -1,13 +1,16 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QLineEdit, QPushButton, QFormLayout, QGroupBox, QSpinBox,
-                             QGridLayout, QFrame)
+                             QGridLayout, QFrame, QFileDialog, QMessageBox)
 from PyQt5.QtCore import Qt
 from src.logic.cost_calculator import CostCalculator
+from src.logic.report_generator import ReportGenerator
 
 class CalculatorWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.calculator = CostCalculator()
+        self.report_generator = ReportGenerator()
+        self.last_calculation = None
         self.init_ui()
 
     def init_ui(self):
@@ -104,7 +107,9 @@ class CalculatorWidget(QWidget):
         ganancia_group.setLayout(ganancia_layout)
         main_layout.addWidget(ganancia_group, 1)
 
-        # Botón Calcular
+        # Botones de Acción
+        btn_layout = QHBoxLayout()
+        
         self.btn_calculate = QPushButton("CALCULAR RESULTADOS")
         self.btn_calculate.setCursor(Qt.PointingHandCursor)
         self.btn_calculate.setStyleSheet("""
@@ -112,8 +117,7 @@ class CalculatorWidget(QWidget):
                 background-color: #8b0000;
                 color: white;
                 border-radius: 5px;
-                padding: 8px;
-                margin: 5px 0;
+                padding: 10px;
                 font-weight: bold;
                 font-size: 14px;
             }
@@ -122,7 +126,28 @@ class CalculatorWidget(QWidget):
             }
         """)
         self.btn_calculate.clicked.connect(self.calculate)
-        main_layout.addWidget(self.btn_calculate)
+        btn_layout.addWidget(self.btn_calculate)
+        
+        self.btn_export = QPushButton("EXPORTAR PDF")
+        self.btn_export.setCursor(Qt.PointingHandCursor)
+        self.btn_export.setStyleSheet("""
+            QPushButton {
+                background-color: #2C3E50;
+                color: white;
+                border-radius: 5px;
+                padding: 10px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background-color: #34495E;
+            }
+        """)
+        self.btn_export.clicked.connect(self.export_pdf)
+        self.btn_export.setEnabled(False) # Deshabilitado hasta calcular
+        btn_layout.addWidget(self.btn_export)
+        
+        main_layout.addLayout(btn_layout)
 
         # === RESULTADOS ===
         results_group = QGroupBox("Desglose de Costes")
@@ -215,10 +240,43 @@ class CalculatorWidget(QWidget):
             self.lbl_total_cost.value_label.setText(f"{total_cost:.2f} €")
             self.lbl_sale_price.value_label.setText(f"{sale_price:.2f} €")
             
+            # Guardar datos para exportación
+            self.last_calculation = {
+                'weight': weight,
+                'time': total_time,
+                'price_per_kg': price_kg,
+                'power': power,
+                'energy_cost_rate': energy_price,
+                'filament_cost': filament_cost,
+                'energy_cost': energy_cost,
+                'total_cost': total_cost
+            }
+            self.btn_export.setEnabled(True)
+            
         except ValueError:
             self.lbl_total_cost.value_label.setText("Error")
+            self.btn_export.setEnabled(False)
 
         except ValueError:
-            self.lbl_total_cost.setText("Error: Ingrese valores numéricos válidos")
-            self.lbl_total_cost.setStyleSheet("font-size: 16px; font-weight: bold; color: #8b0000;")
-            self.lbl_sale_price.setText("")
+            self.lbl_total_cost.value_label.setText("Error: Ingrese valores numéricos válidos")
+            self.lbl_sale_price.value_label.setText("")
+            self.btn_export.setEnabled(False)
+
+    def export_pdf(self):
+        """Exporta los resultados a PDF."""
+        if not self.last_calculation:
+            return
+            
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Guardar Informe", "", "Archivos PDF (*.pdf)"
+        )
+        
+        if file_path:
+            if not file_path.endswith('.pdf'):
+                file_path += '.pdf'
+                
+            try:
+                self.report_generator.generate_cost_report(self.last_calculation, file_path)
+                QMessageBox.information(self, "Éxito", "Informe guardado correctamente")
+            except Exception as e:
+                QMessageBox.warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")
