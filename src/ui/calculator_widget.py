@@ -12,37 +12,8 @@ class CalculatorWidget(QWidget):
 
     def init_ui(self):
         # Estilo global
-        self.setStyleSheet("""
-            QLabel { font-size: 15px; color: #e0e0e0; }
-            QLineEdit, QSpinBox { 
-                font-size: 15px; 
-                padding: 6px; 
-                background-color: #333; 
-                border: 1px solid #444; 
-                border-radius: 4px; 
-                color: white;
-            }
-            QLineEdit:focus, QSpinBox:focus { border: 1px solid #00bcd4; }
-            QGroupBox { 
-                font-size: 14px; 
-                font-weight: bold; 
-                color: #00bcd4; 
-                border: 1px solid #444; 
-                border-radius: 6px; 
-                margin-top: 10px; 
-                padding-top: 15px;
-            }
-            QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 5px; }
-            QPushButton { 
-                font-size: 14px; 
-                padding: 10px; 
-                font-weight: bold; 
-                background-color: #00bcd4; 
-                color: black; 
-                border-radius: 5px; 
-            }
-            QPushButton:hover { background-color: #26c6da; }
-        """)
+        # Estilo global movido a QSS
+        pass
 
         main_layout = QVBoxLayout()
         main_layout.setSpacing(20)
@@ -119,7 +90,8 @@ class CalculatorWidget(QWidget):
         ganancia_layout.addLayout(self.create_v_input("Multiplicador:", self.input_margin), 1)
 
         ref_frame = QFrame()
-        ref_frame.setStyleSheet("background-color: #2a2a2a; border-radius: 4px; padding: 5px;")
+        ref_frame.setObjectName("Card")
+        ref_frame.setStyleSheet("padding: 5px;") # Keep padding override if needed, or move to QSS
         ref_box = QVBoxLayout(ref_frame)
         ref_box.setContentsMargins(5, 5, 5, 5)
         ref_label = QLabel("Referencias:  Minorista → x4  |  Mayorista → x3  |  Llaveros → x5")
@@ -191,13 +163,8 @@ class CalculatorWidget(QWidget):
     def create_result_card(self, title, value, color_bg="#2a2a2a", big=False):
         """Crea una tarjeta para mostrar resultados."""
         card = QFrame()
-        card.setStyleSheet(f"""
-            QFrame {{
-                background-color: {color_bg};
-                border-radius: 6px;
-                border: 1px solid #3a3a3a;
-            }}
-        """)
+        card = QFrame()
+        card.setObjectName("Card")
         lay = QHBoxLayout(card)
         lay.setContentsMargins(10, 8, 10, 8)
         

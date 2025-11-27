@@ -35,6 +35,11 @@
 - Catálogo de modelos 3D
 - Simulación de compra/descarga
 
+### Notificaciones Inteligentes
+- Panel de alertas en el Dashboard
+- Aviso de filamentos con poco material (<20%)
+- Resumen de actividad mensual y modelos recientes
+
 ## Tecnologías
 - **Lenguaje**: Python 3.8+
 - **Interfaz**: PyQt5
@@ -90,6 +95,7 @@ Gestor3D/
 - [x] Biblioteca con visor 3D
 - [x] Inventario CRUD
 - [x] Marketplace simulado
+- [x] Dashboard con notificaciones inteligentes
 
 ### Próximas Mejoras 
 - [ ] Autenticación de usuarios

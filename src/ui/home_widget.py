@@ -6,6 +6,8 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from src.logic.inventory_manager import InventoryManager
 from src.logic.library_manager import LibraryManager
+from src.ui.notifications_panel import NotificationsPanel
+
 
 class HomeWidget(QWidget):
     def __init__(self):
@@ -40,6 +42,12 @@ class HomeWidget(QWidget):
         content_layout.addWidget(projects_panel, 1)
         
         main_layout.addLayout(content_layout)
+
+        # --- Panel de Notificaciones Inteligentes ---
+        self.notifications_panel = NotificationsPanel()
+        # Ajustar altura fija para que no ocupe demasiado, o dejar que se expanda según contenido
+        self.notifications_panel.setFixedHeight(220) 
+        main_layout.addWidget(self.notifications_panel)
         
         self.setLayout(main_layout)
 
@@ -48,13 +56,7 @@ class HomeWidget(QWidget):
     def create_materials_panel(self):
         """Panel con gráfico de materiales."""
         panel = QFrame()
-        panel.setStyleSheet("""
-            QFrame {
-                background-color: #2a2a2a;
-                border-radius: 8px;
-                border: 1px solid #3a3a3a;
-            }
-        """)
+        panel.setObjectName("Card")
         
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(15, 15, 15, 15)
@@ -138,13 +140,7 @@ class HomeWidget(QWidget):
     def create_projects_panel(self):
         """Panel con últimos proyectos/modelos."""
         panel = QFrame()
-        panel.setStyleSheet("""
-            QFrame {
-                background-color: #2a2a2a;
-                border-radius: 8px;
-                border: 1px solid #3a3a3a;
-            }
-        """)
+        panel.setObjectName("Card")
         
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(15, 15, 15, 15)

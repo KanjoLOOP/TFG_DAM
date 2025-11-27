@@ -17,9 +17,9 @@ class MarketplaceWidget(QWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         
-        # Encabezado oscuro
+        # Encabezado
         header = QFrame()
-        header.setStyleSheet("background-color: #222222; padding: 20px;")
+        header.setObjectName("Header")
         header_layout = QHBoxLayout(header) # Changed to HBox for button
         
         title = QLabel("Marketplace de Modelos 3D")
@@ -51,10 +51,13 @@ class MarketplaceWidget(QWidget):
         # Área de scroll principal
         main_scroll = QScrollArea()
         main_scroll.setWidgetResizable(True)
+        main_scroll = QScrollArea()
+        main_scroll.setWidgetResizable(True)
         main_scroll.setStyleSheet("border: none; background-color: #1E1E1E;")
         
         content_widget = QWidget()
         content_widget.setStyleSheet("background-color: #1E1E1E;")
+        content_widget = QWidget()
         self.main_layout = QVBoxLayout(content_widget)
         self.main_layout.setContentsMargins(20, 20, 20, 20)
         self.main_layout.setSpacing(30)
@@ -182,17 +185,7 @@ class MarketplaceWidget(QWidget):
 
     def create_item_card(self, item_data):
         card = QFrame()
-        card.setStyleSheet("""
-            QFrame {
-                background-color: #2C2C2C;
-                border-radius: 12px;
-                border: 1px solid #3a3a3a;
-            }
-            QFrame:hover {
-                border: 1px solid #007BFF;
-                background-color: #333333;
-            }
-        """)
+        card.setObjectName("Card")
         card.setFixedSize(260, 340)
         
         # Sombra sutil

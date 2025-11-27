@@ -9,6 +9,7 @@ from src.ui.calculator_widget import CalculatorWidget
 from src.ui.library_widget import LibraryWidget
 from src.ui.inventory_widget import InventoryWidget
 from src.ui.marketplace_widget import MarketplaceWidget
+from src.ui.settings_widget import SettingsWidget
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -78,7 +79,12 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.btn_calc)
         layout.addWidget(self.btn_library)
         layout.addWidget(self.btn_inventory)
+        layout.addWidget(self.btn_inventory)
         layout.addWidget(self.btn_market)
+        
+        # Configuración
+        self.btn_settings = self.create_menu_button("Configuración", 5)
+        layout.addWidget(self.btn_settings)
         
         layout.addStretch()
         
@@ -105,12 +111,14 @@ class MainWindow(QMainWindow):
         self.library_widget = LibraryWidget()
         self.inventory_widget = InventoryWidget()
         self.market_widget = MarketplaceWidget()
+        self.settings_widget = SettingsWidget()
 
         self.content_area.addWidget(self.home_widget)
         self.content_area.addWidget(self.calc_widget)
         self.content_area.addWidget(self.library_widget)
         self.content_area.addWidget(self.inventory_widget)
         self.content_area.addWidget(self.market_widget)
+        self.content_area.addWidget(self.settings_widget)
 
         # Seleccionar página inicial
         self.btn_home.click()
@@ -120,7 +128,7 @@ class MainWindow(QMainWindow):
         self.content_area.setCurrentIndex(index)
         
         # Desmarcar todos los botones
-        for btn in [self.btn_home, self.btn_calc, self.btn_library, self.btn_inventory, self.btn_market]:
+        for btn in [self.btn_home, self.btn_calc, self.btn_library, self.btn_inventory, self.btn_market, self.btn_settings]:
             btn.setChecked(False)
         
         # Marcar el botón actual

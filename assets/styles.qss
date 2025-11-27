@@ -146,3 +146,15 @@ QListWidget::item:hover {
 QLabel {
     color: #e0e0e0;
 }
+
+/* Contenedores (Tarjetas) */
+QFrame#Card {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    border: 1px solid #3a3a3a;
+}
+
+QFrame#Header {
+    background-color: #222222;
+    border-bottom: 1px solid #3a3a3a;
+}
