@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, 
                              QPushButton, QScrollArea, QFrame, QMessageBox, QGraphicsDropShadowEffect, QSizePolicy,
                              QDialog, QFormLayout, QLineEdit, QDialogButtonBox, QFileDialog, QCheckBox, QGroupBox, QColorDialog)
+from src.ui.utils import MessageBoxHelper
 from PyQt5.QtGui import QPixmap, QColor
 from PyQt5.QtCore import Qt
 import os
@@ -420,12 +421,7 @@ class MarketplaceWidget(QWidget):
             if name and price:
                 self.upload_model(name, price, desc, img_path, stl_path, base_cost, is_ams, ams_data)
             else:
-                msg_box = QMessageBox(self.window())
-                msg_box.setWindowTitle("Error")
-                msg_box.setText("El nombre y el precio son obligatorios.")
-                msg_box.setIcon(QMessageBox.Warning)
-                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-                msg_box.exec_()
+                MessageBoxHelper.show_warning(self.window(), "Error", "El nombre y el precio son obligatorios.")
 
     def upload_model(self, name, price, desc, img_path, stl_path, base_cost="", is_ams=False, ams_costs=None):
         """Simula la subida de un modelo."""
@@ -447,18 +443,9 @@ class MarketplaceWidget(QWidget):
         # Simplemente repoblar el grid de 'Todos los modelos'
         self.update_grid_columns()
         
-        msg_box = QMessageBox(self.window())
-        msg_box.setWindowTitle("Éxito")
-        msg_box.setText(f"Modelo '{name}' subido correctamente al Marketplace.")
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-        msg_box.exec_()
+        MessageBoxHelper.show_info(self.window(), "Éxito", f"Modelo '{name}' subido correctamente al Marketplace.")
 
     def buy_item(self, name):
         # Simulación de compra
-        msg_box = QMessageBox(self.window())
-        msg_box.setWindowTitle("Compra Exitosa")
-        msg_box.setText(f"Has adquirido '{name}'.\n(Simulación: El modelo se añadiría a tu biblioteca)")
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-        msg_box.exec_()
+        MessageBoxHelper.show_info(self.window(), "Compra Exitosa", 
+                                 f"Has adquirido '{name}'.\n(Simulación: El modelo se añadiría a tu biblioteca)")

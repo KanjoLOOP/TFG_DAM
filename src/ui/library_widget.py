@@ -1,10 +1,3 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
-                             QListWidget, QFileDialog, QMessageBox, QSplitter, QLineEdit, QFrame, QLabel)
-from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtGui import QIcon
-from src.logic.library_manager import LibraryManager
-from src.ui.viewer_3d import Viewer3DWidget
-
 class LibraryWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -190,19 +183,9 @@ class LibraryWidget(QWidget):
             success, msg = self.manager.add_model(file_path, name)
             if success:
                 self.refresh_list()
-                msg_box = QMessageBox(self)
-                msg_box.setWindowTitle("Éxito")
-                msg_box.setText(msg)
-                msg_box.setIcon(QMessageBox.Information)
-                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-                msg_box.exec_()
+                MessageBoxHelper.show_info(self, "Éxito", msg)
             else:
-                msg_box = QMessageBox(self)
-                msg_box.setWindowTitle("Error")
-                msg_box.setText(msg)
-                msg_box.setIcon(QMessageBox.Warning)
-                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-                msg_box.exec_()
+                MessageBoxHelper.show_warning(self, "Error", msg)
 
     def delete_model(self):
         """Elimina el modelo seleccionado."""
@@ -212,27 +195,14 @@ class LibraryWidget(QWidget):
         
         model_id = current_item.data(Qt.UserRole)
         
-        msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("Confirmar")
-        msg_box.setText("¿Estás seguro de eliminar este modelo?")
-        msg_box.setIcon(QMessageBox.Question)
-        btn_si = msg_box.addButton("Sí", QMessageBox.YesRole)
-        btn_no = msg_box.addButton("No", QMessageBox.NoRole)
-        msg_box.exec_()
-        
-        if msg_box.clickedButton() == btn_si:
+        if MessageBoxHelper.ask_confirmation(self, "Confirmar", "¿Estás seguro de eliminar este modelo?"):
             if self.manager.delete_model(model_id):
                 self.refresh_list()
                 self.viewer.ax.clear() # Limpiar visor
                 self.viewer.configure_axes() # Reconfigurar ejes vacíos
                 self.viewer.canvas.draw()
             else:
-                msg_box = QMessageBox(self)
-                msg_box.setWindowTitle("Error")
-                msg_box.setText("No se pudo eliminar el modelo.")
-                msg_box.setIcon(QMessageBox.Warning)
-                msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-                msg_box.exec_()
+                MessageBoxHelper.show_warning(self, "Error", "No se pudo eliminar el modelo.")
 
     def on_model_selected(self, item):
         """Carga el modelo en el visor cuando se selecciona."""

@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QPushButton, QLineEdit, QFrame, QMessageBox)
+from src.ui.utils import MessageBoxHelper
 from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QFont
 
@@ -195,34 +196,11 @@ class LoginWidget(QWidget):
     
     def show_message(self, title, text, icon):
         """Muestra un mensaje al usuario."""
-        msg_box = QMessageBox(self.window())
-        msg_box.setWindowTitle(title)
-        msg_box.setText(text)
-        msg_box.setIcon(icon)
-        
-        # Forzar estilo claro para asegurar legibilidad
-        msg_box.setStyleSheet("""
-            QMessageBox {
-                background-color: #ffffff;
-                color: #000000;
-            }
-            QLabel {
-                color: #000000;
-                background-color: transparent;
-                font-size: 14px;
-            }
-            QPushButton {
-                background-color: #f0f0f0;
-                color: #000000;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                padding: 6px 20px;
-                min-width: 80px;
-            }
-            QPushButton:hover {
-                background-color: #e0e0e0;
-            }
-        """)
-        
-        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-        msg_box.exec_()
+        if icon == QMessageBox.Information:
+            MessageBoxHelper.show_info(self.window(), title, text)
+        elif icon == QMessageBox.Warning:
+            MessageBoxHelper.show_warning(self.window(), title, text)
+        elif icon == QMessageBox.Critical:
+            MessageBoxHelper.show_error(self.window(), title, text)
+        else:
+            MessageBoxHelper.show_info(self.window(), title, text)

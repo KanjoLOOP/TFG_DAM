@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                              QLineEdit, QPushButton, QFormLayout, QGroupBox, QSpinBox,
                              QGridLayout, QFrame, QFileDialog, QMessageBox)
+from src.ui.utils import MessageBoxHelper
 from PyQt5.QtCore import Qt
 from src.logic.cost_calculator import CostCalculator
 from src.logic.report_generator import ReportGenerator
@@ -277,6 +278,6 @@ class CalculatorWidget(QWidget):
                 
             try:
                 self.report_generator.generate_cost_report(self.last_calculation, file_path)
-                QMessageBox.information(self, "Éxito", "Informe guardado correctamente")
+                MessageBoxHelper.show_info(self, "Éxito", "Informe guardado correctamente")
             except Exception as e:
-                QMessageBox.warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")
+                MessageBoxHelper.show_warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")

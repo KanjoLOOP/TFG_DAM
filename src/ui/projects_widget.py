@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLa
                              QPushButton, QScrollArea, QFrame, QMessageBox, QDialog,
                              QFormLayout, QLineEdit, QComboBox, QTextEdit, QDoubleSpinBox,
                              QFileDialog)
+from src.ui.utils import MessageBoxHelper
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from src.logic.project_manager import ProjectManager
@@ -229,33 +230,22 @@ class ProjectsWidget(QWidget):
     
     def delete_project(self, project_id, project_name):
         """Elimina un proyecto."""
-        msg_box = QMessageBox(self.window())
-        msg_box.setWindowTitle("Confirmar eliminación")
-        msg_box.setText(f"¿Estás seguro de que deseas eliminar el proyecto '{project_name}'?")
-        msg_box.setIcon(QMessageBox.Question)
-        btn_yes = msg_box.addButton("Sí", QMessageBox.YesRole)
-        btn_no = msg_box.addButton("No", QMessageBox.NoRole)
-        msg_box.exec_()
-        
-        if msg_box.clickedButton() == btn_yes:
+        if MessageBoxHelper.ask_confirmation(self.window(), "Confirmar eliminación", 
+                                           f"¿Estás seguro de que deseas eliminar el proyecto '{project_name}'?"):
             success, message = self.project_manager.delete_project(project_id)
             
-            msg_result = QMessageBox(self.window())
-            msg_result.setWindowTitle("Éxito" if success else "Error")
-            msg_result.setText(message)
-            msg_result.setIcon(QMessageBox.Information if success else QMessageBox.Warning)
-            msg_result.addButton("Aceptar", QMessageBox.AcceptRole)
-            msg_result.exec_()
-            
             if success:
+                MessageBoxHelper.show_info(self.window(), "Éxito", message)
                 self.load_projects()
+            else:
+                MessageBoxHelper.show_warning(self.window(), "Error", message)
 
     def export_stats(self):
         """Exporta las estadísticas de proyectos a PDF."""
         stats = self.project_manager.get_project_stats(self.user['id'])
         
         if not stats or stats['total_projects'] == 0:
-            QMessageBox.warning(self, "Aviso", "No hay datos suficientes para generar un informe.")
+            MessageBoxHelper.show_warning(self, "Aviso", "No hay datos suficientes para generar un informe.")
             return
 
         file_path, _ = QFileDialog.getSaveFileName(
@@ -270,9 +260,9 @@ class ProjectsWidget(QWidget):
                 # Convertir Row a dict si es necesario
                 stats_dict = dict(stats)
                 self.report_generator.generate_stats_report(self.user['username'], stats_dict, file_path)
-                QMessageBox.information(self, "Éxito", "Informe guardado correctamente")
+                MessageBoxHelper.show_info(self, "Éxito", "Informe guardado correctamente")
             except Exception as e:
-                QMessageBox.warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")
+                MessageBoxHelper.show_warning(self, "Error", f"No se pudo guardar el informe: {str(e)}")
 
 
 class ProjectDialog(QDialog):
@@ -426,12 +416,7 @@ class ProjectDialog(QDialog):
         """Guarda el proyecto."""
         name = self.name_input.text().strip()
         if not name:
-            msg = QMessageBox(self)
-            msg.setWindowTitle("Error")
-            msg.setText("El nombre del proyecto es obligatorio")
-            msg.setIcon(QMessageBox.Warning)
-            msg.addButton("Aceptar", QMessageBox.AcceptRole)
-            msg.exec_()
+            MessageBoxHelper.show_warning(self, "Error", "El nombre del proyecto es obligatorio")
             return
         
         description = self.desc_input.toPlainText().strip()
@@ -481,12 +466,7 @@ class ProjectDialog(QDialog):
         if success:
             self.accept()
         else:
-            msg = QMessageBox(self)
-            msg.setWindowTitle("Error")
-            msg.setText(message)
-            msg.setIcon(QMessageBox.Warning)
-            msg.addButton("Aceptar", QMessageBox.AcceptRole)
-            msg.exec_()
+            MessageBoxHelper.show_warning(self, "Error", message)
     
     def get_input_style(self):
         return """

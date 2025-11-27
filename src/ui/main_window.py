@@ -1,6 +1,7 @@
 import os
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, 
                              QPushButton, QStackedWidget, QFrame, QLabel, QMessageBox)
+from src.ui.utils import MessageBoxHelper
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 
@@ -168,10 +169,7 @@ class MainWindow(QMainWindow):
         
         feature_name = feature_names.get(index, "esta funcionalidad")
         
-        msg_box = QMessageBox(self)
-        msg_box.setWindowTitle("Inicio de sesión requerido")
-        msg_box.setText(f"Necesitas iniciar sesión para acceder a {feature_name}.")
-        msg_box.setInformativeText("El modo invitado solo permite usar la Calculadora de Costes.")
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
-        msg_box.exec_()
+        feature_name = feature_names.get(index, "esta funcionalidad")
+        
+        MessageBoxHelper.show_info(self, "Inicio de sesión requerido", 
+                                 f"Necesitas iniciar sesión para acceder a {feature_name}.\n\nEl modo invitado solo permite usar la Calculadora de Costes.")
