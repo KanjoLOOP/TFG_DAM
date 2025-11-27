@@ -199,5 +199,30 @@ class LoginWidget(QWidget):
         msg_box.setWindowTitle(title)
         msg_box.setText(text)
         msg_box.setIcon(icon)
+        
+        # Forzar estilo claro para asegurar legibilidad
+        msg_box.setStyleSheet("""
+            QMessageBox {
+                background-color: #ffffff;
+                color: #000000;
+            }
+            QLabel {
+                color: #000000;
+                background-color: transparent;
+                font-size: 14px;
+            }
+            QPushButton {
+                background-color: #f0f0f0;
+                color: #000000;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 6px 20px;
+                min-width: 80px;
+            }
+            QPushButton:hover {
+                background-color: #e0e0e0;
+            }
+        """)
+        
         msg_box.addButton("Aceptar", QMessageBox.AcceptRole)
         msg_box.exec_()

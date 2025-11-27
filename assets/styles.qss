@@ -1,5 +1,5 @@
 /* Estilos Globales - Dark Mode Moderno y Discreto */
-QMainWindow {
+QMainWindow, QDialog, QWidget#CentralWidget, QFrame#Card, QScrollArea {
     background-color: #1e1e1e;
     color: #e0e0e0;
 }
@@ -7,7 +7,8 @@ QMainWindow {
 QWidget {
     font-family: 'Segoe UI', sans-serif;
     font-size: 14px;
-    color: #e0e0e0;
+    /* Color de texto base, pero NO fondo global */
+    color: #e0e0e0; 
 }
 
 /* Botones */

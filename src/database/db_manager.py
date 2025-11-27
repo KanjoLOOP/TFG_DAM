@@ -29,7 +29,7 @@ class DBManager:
         """Ejecuta una consulta (INSERT, UPDATE, DELETE)."""
         if not self.connection:
             if not self.connect():
-                return None
+                raise Exception("No se pudo conectar a la base de datos")
         
         cursor = self.connection.cursor()
         try:
@@ -37,13 +37,8 @@ class DBManager:
             self.connection.commit()
             return cursor
         except Error as e:
-            print(f"Error en la consulta: {e}")
-            return None
-        finally:
-            # No cerramos el cursor aquí si queremos devolverlo, 
-            # pero en SQLite es común cerrarlo. 
-            # Para consistencia con el uso anterior, devolvemos el cursor.
-            pass
+            # Propagar la excepción para que el caller la maneje (ej: IntegrityError)
+            raise e
 
     def fetch_query(self, query, params=()):
         """Ejecuta una consulta de selección (SELECT)."""
