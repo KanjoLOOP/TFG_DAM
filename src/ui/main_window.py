@@ -151,6 +151,11 @@ class MainWindow(QMainWindow):
 
     def switch_page(self, index, button):
         """Cambia la página visible y actualiza el estado de los botones."""
+        # Desmarcar todos los botones primero para evitar estados inconsistentes
+        for btn in [self.btn_home, self.btn_calc, self.btn_library, self.btn_inventory, 
+                   self.btn_projects, self.btn_market, self.btn_settings]:
+            btn.setChecked(False)
+
         # Verificar permisos de invitado
         if self.auth_manager.is_guest():
             # Solo permitir calculadora (index 1) y configuración (index 6)
@@ -162,11 +167,6 @@ class MainWindow(QMainWindow):
                 return
         
         self.content_area.setCurrentIndex(index)
-        
-        # Desmarcar todos los botones
-        for btn in [self.btn_home, self.btn_calc, self.btn_library, self.btn_inventory, 
-                   self.btn_projects, self.btn_market, self.btn_settings]:
-            btn.setChecked(False)
         
         # Marcar el botón actual
         button.setChecked(True)

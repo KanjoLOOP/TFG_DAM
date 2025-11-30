@@ -4,8 +4,14 @@ from sqlite3 import Error
 
 class DBManager:
     def __init__(self, db_file='gestor3d.db'):
-        # Asegurar que la ruta sea absoluta o relativa al directorio de trabajo correcto
-        self.db_file = db_file
+        # Asegurar que la ruta sea absoluta para evitar problemas con el CWD
+        if db_file == 'gestor3d.db':
+            # .../src/database/db_manager.py -> .../src/database -> .../src -> .../ (Project Root)
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            self.db_file = os.path.join(base_dir, db_file)
+        else:
+            self.db_file = db_file
+            
         self.connection = None
 
     def connect(self):
